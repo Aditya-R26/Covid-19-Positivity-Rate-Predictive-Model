@@ -1,0 +1,1001 @@
+---
+title: "STAT 512 Final Project"
+author: "Aditya Rudraksha, Brianna Shannon, Sneha Shathish"
+date: "12/08/2021"
+output:
+  word_document:
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+library(ALSM)
+library(MASS) 
+library(onewaytests) 
+library(ggplot2)
+library(readr)
+library(car)
+library(fmsb)
+library(leaps)
+library(caret)
+```
+
+# Data
+
+```{r}
+#Data <- read.csv("C:/Users/Sneha Shathish/Desktop/stat 512/stat 512 project data.csv")
+
+Data <- read.csv("C:/Users/Brianna/Documents/Fall 2021/STAT 512/Project_STAT/stat 512 project data.csv")
+```
+
+## SLR Models
+```{r}
+y <- Data$COVID_POSITIVE 
+x1 <- Data$poverty 
+x2 <- Data$uninsured 
+x3 <- Data$obesity 
+x4 <- Data$inactive 
+x5 <- Data$smokers 
+x6 <- Data$life_exp 
+x7 <- Data$poor_fair_health 
+```
+
+```{r}
+slr1 <- lm(y~x1) 
+summary(slr1)
+slr2 <- lm(y~x2) 
+summary(slr2)
+slr3 <- lm(y~x3)
+summary(slr3)
+slr4 <- lm(y~x4)
+summary(slr4)
+slr5 <- lm(y~x5)
+summary(slr5)
+slr6 <- lm(y~x6)
+summary(slr6)
+slr7 <- lm(y~x7)
+summary(slr7)
+```
+## MLR Models
+``` {r}
+mlr1 <- lm(y~x1+x2)
+summary(mlr1)
+plot(mlr1)
+```
+
+``` {r}
+mlr2 <- lm(y~x3+x4)
+summary(mlr2)
+plot(mlr2)
+```
+
+``` {r}
+mlr3 <- lm(y~x5+x6+x7)
+summary(mlr3)
+plot(mlr3)
+```
+
+# Assumptions
+
+Assumption checking on each individual variable was done mainly for data exploration.
+
+# Residual Test:
+
+## X1
+
+```{r}
+par(mfrow=c(2,2))
+plot(slr1)
+residualPlots(slr1) 
+```
+
+## X2
+
+```{r}
+par(mfrow=c(2,2))
+plot(slr2) 
+residualPlots(slr2) 
+```
+
+## X3
+
+```{r}
+par(mfrow=c(2,2))
+plot(slr3) 
+residualPlots(slr3) 
+```
+
+## X4
+
+```{r}
+par(mfrow=c(2,2))
+plot(slr4) 
+residualPlots(slr4) 
+```
+
+## X5
+
+```{r}
+par(mfrow=c(2,2))
+plot(slr5) 
+residualPlots(slr5) 
+```
+
+## X6
+
+```{r}
+par(mfrow=c(2,2))
+plot(slr6) 
+residualPlots(slr6) 
+```
+
+## X7
+
+```{r}
+par(mfrow=c(2,2))
+plot(slr7) 
+residualPlots(slr7) 
+```
+
+# Brown-Forsythe Test for Constant Variance:
+
+## X1
+
+```{r}
+Data$group1 <- cut(y, 2) 
+Data$residual1 <- slr1$residuals 
+bf.test(residual1~group1, Data) 
+```
+
+## X2
+
+```{r}
+Data$group2 <- cut(y, 2) 
+Data$residual2 <- slr2$residuals 
+bf.test(residual2~group2, Data) 
+```
+
+## X3
+
+```{r}
+Data$group3 <- cut(y, 2) 
+Data$residual3 <- slr3$residuals 
+bf.test(residual3~group3, Data) 
+```
+
+## X4
+
+```{r}
+Data$group4 <- cut(y, 2) 
+Data$residual4 <- slr4$residuals 
+bf.test(residual4~group4, Data) 
+```
+
+## X5
+
+```{r}
+Data$group5 <- cut(y, 2) 
+Data$residual5 <- slr5$residuals 
+bf.test(residual5~group5, Data) 
+```
+
+## X6
+
+```{r}
+Data$group6 <- cut(y, 2) 
+Data$residual6 <- slr6$residuals 
+bf.test(residual6~group6, Data) 
+```
+
+## X7
+
+```{r}
+Data$group7 <- cut(y, 2) 
+Data$residual7 <- slr7$residuals 
+bf.test(residual7~group7, Data) 
+```
+
+# Shapiro-Wilk Test for Normality:
+
+## X1
+
+```{r}
+exporesid1 <- residuals(slr1) 
+shapiro.test(exporesid1) 
+```
+
+## X2
+
+```{r}
+exporesid2<- residuals(slr2) 
+shapiro.test(exporesid2) 
+```
+
+## X3
+
+```{r}
+exporesid3<- residuals(slr3) 
+shapiro.test(exporesid3) 
+```
+
+## X4
+
+```{r}
+exporesid4<- residuals(slr4) 
+shapiro.test(exporesid4) 
+```
+
+## X5
+
+```{r}
+exporesid5<- residuals(slr5) 
+shapiro.test(exporesid5) 
+```
+
+## X6
+
+```{r}
+exporesid6<- residuals(slr6) 
+shapiro.test(exporesid6) 
+```
+
+## X7
+
+```{r}
+exporesid7<- residuals(slr7) 
+shapiro.test(exporesid7) 
+```
+
+# Scatter Plot for Linearity:
+
+## X1
+
+```{r}
+plot(y~x1)
+abline(slr1)
+```
+
+## X2
+
+```{r}
+plot(y~x2)
+abline(slr2)
+```
+
+## X3
+
+```{r}
+plot(y~x3)
+abline(slr3)
+```
+
+## X4
+
+```{r}
+plot(y~x4)
+abline(slr4)
+```
+
+## X5
+
+```{r}
+plot(y~x5)
+abline(slr5)
+```
+
+## X6
+
+```{r}
+plot(y~x6)
+abline(slr6)
+```
+
+## X7
+
+```{r}
+plot(y~x7)
+abline(slr7)
+```
+
+# Research Questions
+
+Assumption checking and model improvement for our 3 research questions (i.e., 3 MLR models) occurs from here on.
+
+# Multicollinearity (VIF)
+
+VIF was used to check if there was any multicollinearity issues. Because all VIF values were less than 10, it can be concluded that there is no multicollinearity issues.
+
+## Q1
+
+```{r}
+VIF(lm(x1~x2))
+```
+
+## Q2
+
+```{r}
+VIF(lm(x3~x4))
+```
+
+## Q3
+
+```{r}
+VIF(lm(x5~x6+x7))
+VIF(lm(x6~x5+x7))
+VIF(lm(x7~x5+x6))
+```
+
+# Outliers (Hat Matrix)
+
+The Hat Matrix was used to identify outliers in X and in Y. All 3 research questions had outliers.
+
+```{r}
+y_m <- as.matrix(y)
+x1_m <- as.matrix(x1) 
+x2_m <- as.matrix(x2) 
+x3_m <- as.matrix(x3) 
+x4_m <- as.matrix(x4) 
+x5_m <- as.matrix(x5) 
+x6_m <- as.matrix(x6) 
+x7_m <- as.matrix(x7) 
+Intercept <- rep(1,92) 
+```
+
+## Q1
+
+```{r}
+x_mlr1 <- cbind(Intercept,x1_m,x2_m) 
+
+xtx <- t(x_mlr1)%*%x_mlr1 
+xtxinv <- solve(xtx) 
+xty <- t(x_mlr1)%*%y_m 
+
+hat <- x_mlr1%*%xtxinv%*%t(x_mlr1) 
+inf <- lm.influence(mlr1)$hat 
+hbar <- sum(inf)/92 
+
+for (i in 1:length(inf)){ 
+  if (inf[i] > 2*hbar){ 
+    print(inf[i]) 
+  } 
+} 
+```
+
+## Q2
+
+```{r}
+x_mlr2 <- cbind(Intercept,x3_m,x4_m) 
+
+xtx <- t(x_mlr2)%*%x_mlr2 
+xtxinv <- solve(xtx) 
+xty <- t(x_mlr2)%*%y_m 
+
+hat <- x_mlr2%*%xtxinv%*%t(x_mlr2) 
+inf <- lm.influence(mlr2)$hat 
+hbar <- sum(inf)/92 
+
+for (i in 1:length(inf)){ 
+  if (inf[i] > 2*hbar){ 
+    print(inf[i]) 
+  } 
+} 
+```
+## Q3
+
+```{r}
+x_mlr3 <- cbind(Intercept,x5_m,x6_m,x7_m) 
+
+xtx <- t(x_mlr3)%*%x_mlr3 
+xtxinv <- solve(xtx) 
+xty <- t(x_mlr3)%*%y_m 
+
+hat <- x_mlr3%*%xtxinv%*%t(x_mlr3) 
+inf <- lm.influence(mlr3)$hat 
+hbar <- sum(inf)/92 
+
+for (i in 1:length(inf)){ 
+  if (inf[i] > 2*hbar){ 
+    print(inf[i]) 
+  } 
+} 
+```
+
+# Model Improvement - Removal of Outliers
+
+Because all 3 research questions had outliers, they were removed and a new mlr model was made. However, the new mlr models without the outliers showed no improvement, so the original data set was used.
+
+## Q1
+
+```{r}
+dataQ1.1 <- Data[-c(14,18,29,32,44,53), ]
+mlr1.1 = lm(COVID_POSITIVE~poverty+uninsured, data=dataQ1.1)
+summary(mlr1.1)
+plot(mlr1.1)
+```
+
+## Q2
+
+```{r}
+dataQ2.1 <- Data[-c(6,13,28,29,51,53,54,56,80,81,83,91), ]
+mlr2.1 = lm(COVID_POSITIVE~obesity+inactive, data=dataQ2.1)
+summary(mlr2.1)
+plot(mlr2.1)
+```
+
+## Q3
+
+```{r}
+dataQ3.1 <- Data[-c(22,27,29,39,45,52,61,72,78), ]
+mlr3.1 = lm(COVID_POSITIVE~smokers+life_exp+poor_fair_health, data=dataQ3.1)
+summary(mlr3.1)
+plot(mlr3.1)
+```
+
+# Influential Points (Cook's Distance)
+
+Cook's distance was used to identify influential points. The influence plots were used to confirm the results from Cook's distance. All 3 research questions had influential points.
+
+## Q1
+
+```{r}
+print(qf(0.2, 3, 89))
+print(qf(0.5, 3, 89))
+df_cook1 <- data.frame(cooks.distance(mlr1))
+influencePlot(mlr1)
+```
+
+## Q2
+
+```{r}
+df_cook2 <- data.frame(cooks.distance(mlr2))
+influencePlot(mlr2)
+```
+
+## Q3
+
+```{r}
+df_cook3 <- data.frame(cooks.distance(mlr3))
+influencePlot(mlr3)
+```
+
+# Model Improvement - Removal Influential
+
+Because all 3 research questions had influentail points, they were removed and a new mlr model was made. However, the new mlr models without the influentuial points showed no improvement for question 1 and question 2, so the original data set was used for these questions. There was improved for question 3, so this data set without the influential points will be used from here on out.
+
+## Q1
+
+```{r}
+dataQ1.2 <- Data[-c(14,18,29,32,44), ]
+mlr1.2 = lm(COVID_POSITIVE~poverty+uninsured, data=dataQ1.2)
+summary(mlr1.2)
+plot(mlr1.2)
+```
+
+## Q2
+
+```{r}
+dataQ2.2 <- Data[-c(29, 44, 51, 53), ]
+mlr2.2 = lm(COVID_POSITIVE~obesity+inactive, data=dataQ2.2)
+summary(mlr2.2)
+plot(mlr2.2)
+```
+
+## Q3
+
+```{r}
+dataQ3.2 <- Data[-c(29, 44, 53, 72), ]
+mlr3.2 = lm(COVID_POSITIVE~smokers+life_exp+poor_fair_health, data=dataQ3.2)
+summary(mlr3.2)
+plot(mlr3.2)
+```
+
+# Model Improvement - Removal of Both
+
+Because there are still outliers in the data set for question 1 and 2, we tried to remove both the outlier and influential points to see if this would improve our model. The removal of all these points did not improve any of the mlr models. Therefore, the original data set will be used for research question 1 and research question 2. The data set without the influential points will be used for researchh question 3.
+
+## Q1
+```{r}
+dataQ1.25 <- Data[-c(14, 18, 29, 32, 44, 53), ]
+mlr1.25 = lm(COVID_POSITIVE~poverty+uninsured, data=dataQ1.25)
+summary(mlr1.25)
+plot(mlr1.25)
+```
+
+## Q2
+```{r}
+dataQ2.25 <- Data[-c(6, 13, 28, 29, 51, 53, 54, 56, 80, 81, 83, 91, 44), ]
+mlr2.25 = lm(COVID_POSITIVE~obesity+inactive, data=dataQ2.25)
+summary(mlr2.25)
+plot(mlr2.25)
+```
+
+## Q3
+```{r}
+dataQ3.25 <- Data[-c(22, 27, 29, 39, 45, 52, 61, 72, 78, 44, 53), ]
+mlr3.25 = lm(COVID_POSITIVE~smokers+life_exp+poor_fair_health, data=dataQ3.25)
+summary(mlr3.25)
+plot(mlr3.25)
+```
+
+# Model Improvement - Robust Regression
+
+Again, because outliers remain in the data set, a robust regression model was performed for each question since it brings points closer to the mean. Research question1 and research question 2 saw model improvement, so the robust regression for these questions will be used from here on.
+
+## Q1
+```{r}
+model_robust1 <- rlm(Data$COVID_POSITIVE~Data$poverty+Data$uninsured, psi=psi.bisquare)
+summary(model_robust1)
+plot(model_robust1)
+```
+
+## Q2
+```{r}
+model_robust2 <- rlm(Data$COVID_POSITIVE~Data$obesity+Data$inactive, psi=psi.bisquare)
+summary(model_robust2)
+plot(model_robust2)
+```
+
+## Q3
+```{r}
+model_robust3 <- rlm(dataQ3.2$COVID_POSITIVE~dataQ3.2$smokers+dataQ3.2$life_exp+dataQ3.2$poor_fair_health, psi=psi.bisquare)
+summary(model_robust3)
+plot(model_robust3)
+```
+
+```{r}
+model_robust3 <- rlm(dataQ3.25$COVID_POSITIVE~dataQ3.25$smokers+dataQ3.25$life_exp+dataQ3.25$poor_fair_health, psi=psi.bisquare)
+summary(model_robust3)
+plot(model_robust3)
+```
+
+# Shapiro-Wilk Test for Normality:
+
+The Shapiro-Will test was performed for each question to test for normal distribution. All research questions followed normal distribution.
+
+## Q1
+
+```{r}
+exporesid_mlr1<- residuals(model_robust1) 
+shapiro.test(exporesid_mlr1) 
+```
+
+## Q2
+
+```{r}
+exporesid_mlr2<- residuals(model_robust2) 
+shapiro.test(exporesid_mlr2) 
+```
+
+## Q3
+
+```{r}
+exporesid_mlr3<- residuals(mlr3.2) 
+shapiro.test(exporesid_mlr3) 
+```
+
+# Brown-Forsythe Test for Constant Variance:
+
+The Brown-Forsythe Test was performed for all research questions to test for constant variance. Every research question had non-constant variance.
+
+## Q1
+
+```{r}
+Data1 <- Data
+Data1$group <- cut_number(Data1$COVID_POSITIVE, n=5) 
+Data1$residuals = model_robust1$residuals 
+bf.test(residuals~group, Data1) 
+```
+
+## Q2
+
+```{r}
+Data2 <- Data
+Data2$group <- cut_number(Data2$COVID_POSITIVE, n=5) 
+Data2$residuals = model_robust2$residuals 
+bf.test(residuals~group, Data2)
+```
+
+## Q3
+
+```{r}
+dataQ3.2$group <- cut_number(dataQ3.2$COVID_POSITIVE, n=5) 
+dataQ3.2$residuals = mlr3.2$residuals 
+bf.test(residuals~group, dataQ3.2) 
+```
+# Box Cox
+
+Box cox transformation was performed to attempt to address non-constant variance. It was not performed on research question 1 and research question 2 because they are robust regression models. After undergoing box cox transformation, research question 3 still violated the constant variance assumption, so this transformation will not be used.
+
+## Q3
+
+```{r}
+bcmle <- boxcox(mlr3.2, lambda = seq(-3, 3, by = 0.1)) 
+lambda1 <- bcmle$x[which.max(bcmle$y)] 
+
+dataQ3.2$new.y1 <- dataQ3.2$COVID_POSITIVE^lambda1 
+new.mod1 <- lm(new.y1~poverty+uninsured, dataQ3.2) 
+exporesid <- residuals(new.mod1) 
+qqnorm(exporesid) 
+qqline(exporesid) 
+
+# bf test
+dataQ3.2$group <- cut_number(dataQ3.2$new.y1, n=5) 
+new.mod1.modgroup = new.mod1
+dataQ3.2$residuals = new.mod1.modgroup$residuals 
+bf.test(residuals~group, dataQ3.2) 
+```
+
+# Transformation Function
+
+A function was developed to perform different data transformation (no transformation, squared, exponential, logarithmic) on each variable separately and then look at all possible combinations. The goal of this function was to address the non-constant variance, so after every combination a Brown-Forsythe test was ran. This function did fix the violation of non-constant vairance, but it broke normal distribution. Because of this, the data transformations will not be used.
+
+```{r}
+transform_var <- function(var, n)
+{
+  if(n == 1){return(var)}
+  if(n == 2){return(var^2)}
+  if(n == 3){return(exp(var))}
+  if(n == 4){return(log(var))}  #this is really ln(var)
+}
+```
+
+```{r}
+transform_data <- function(x1, x2, x3, y)
+{
+ n = 1        # used to keep track of row number  
+ output <- data.frame()   #empty df to be filled
+ 
+ for(i in 1:4)  #for x1
+ {
+   for(j in 1:4)  #for x2
+   {
+     for(k in 1:4)  #for y
+     {
+       for(l in 1:4)  #for x3
+       {
+         #transforming x1, x2, y
+         x1_t <- transform_var(x1, i)
+         x2_t <- transform_var(x2, j)
+         y_t <- transform_var(y, k)
+         
+         #transforming x3 depending on if third predictor is present
+         if(x3[1] == 0){x3_t <- replicate(length(y), 0)}
+         if(x3[1] != 0){x3_t <- transform_var(x3, l)}
+         
+         #brown-forsythe test
+         df <- data.frame(x1_t, x2_t, x3_t, y_t)
+         df$group <- cut_number(df$y_t, n=5)
+         model <- lm(y_t~x1_t+x2_t+x3_t)
+         df$residuals = model$residuals
+         bf <- bf.test(residuals~group, df, verbose = FALSE) 
+         
+         #shapiro test
+         exporesid <- residuals(model) 
+         s <- shapiro.test(exporesid)
+         
+         #adding info to df
+         output <- rbind(output,n=c(i, j, k, l, bf$p.value, s$p.value))
+         n = n+1
+       }
+     }
+   }
+ }
+ colnames(output) <- c('i','j','k','l','bf_p', 's_p')
+ 
+ return(output)
+}
+```
+
+## Q1
+
+```{r}
+output1 <- transform_data(Data1$poverty,Data1$uninsured, 0, Data1$COVID_POSITIVE)
+which(output1$bf_p > 0.01 && output$s_p >0.01)    #seeing if any combination has constant variance and normal distribution
+```
+
+## Q2
+
+```{r}
+output2 <- transform_data(Data2$obesity, Data2$inactive, 0, Data2$COVID_POSITIVE)
+which(output2$bf_p > 0.01 && output$s_p >0.01)     #seeing if any combination has constant variance and normal distribution
+```
+
+## Q3
+
+```{r}
+output3 <- transform_data(dataQ3.2$smokers, dataQ3.2$life_exp, dataQ3.2$poor_fair_health, dataQ3.2$COVID_POSITIVE)
+which(output3$bf_p > 0.01 && output$s_p >0.01)   #seeing if any combination has constant variance and normal distribution
+```
+
+# WLS
+
+Because there is still non-constant variance for every research question, WLS was performed. First, we performed 3 iterations and assessed which weight reduced the standard error the most. For research question 1, only one iteration was needed. For research question 2 and research question 3, 3 iterations was needed. Once the number of iterations was identified, the Brown-Forsythe test was performed again. However, the all research questions still followed non-constant variance, but because there was model improvement for each research question, the WLS models will be used from here on. 
+
+## Q1
+
+```{r}
+summary(model_robust1)
+y <- Data1$COVID_POSITIVE
+x1 <- Data1$poverty
+x2 <- Data1$uninsured
+
+wts1 <- 1/fitted(lm(abs(residuals(model_robust1))~(x1+x2)))^2
+model1_WLS <- lm(y~x1+x2, weight = wts1)
+summary(model1_WLS)
+
+wts2 <- 1/fitted(lm(abs(residuals(model1_WLS))~(x1+x2)))^2
+model1_WLS2 <- lm(y~x1+x2, weight = wts2)
+summary(model1_WLS2)
+
+wts3 <- 1/fitted(lm(abs(residuals(model1_WLS2))~(x1+x2)))^2
+model1_WLS3 <- lm(y~x1+x2, weight = wts3)
+summary(model1_WLS3)
+```
+
+```{r}
+df <- data.frame(x1, x2, y)
+df$group <- cut_number(df$y, n=5)
+model <- model1_WLS
+df$residuals = model$residuals
+bf <- bf.test(residuals~group, df) 
+
+exporesid_mlr1<- residuals(model1_WLS) 
+shapiro.test(exporesid_mlr1) 
+```
+
+## Q2
+
+```{r}
+summary(model_robust2)
+
+y <- Data2$COVID_POSITIVE
+x1 <- Data2$obesity
+x2 <- Data2$inactive
+
+wts1 <- 1/fitted(lm(abs(residuals(model_robust2))~(x1+x2)))^2
+model2_WLS <- lm(y~x1+x2, weight = wts1)
+summary(model2_WLS)
+
+wts2 <- 1/fitted(lm(abs(residuals(model2_WLS))~(x1+x2)))^2
+model2_WLS2 <- lm(y~x1+x2, weight = wts2)
+summary(model2_WLS2)
+
+wts3 <- 1/fitted(lm(abs(residuals(model2_WLS2))~(x1+x2)))^2
+model2_WLS3 <- lm(y~x1+x2, weight = wts3)
+summary(model2_WLS3)
+```
+
+```{r}
+df <- data.frame(x1, x2, y)
+df$group <- cut_number(df$y, n=5)
+model <- model2_WLS3
+df$residuals = model$residuals
+bf <- bf.test(residuals~group, df) 
+
+exporesid_mlr2<- residuals(model2_WLS3) 
+shapiro.test(exporesid_mlr2) 
+```
+
+## Q3
+
+```{r}
+summary(mlr3.2)
+
+y <- dataQ3.2$COVID_POSITIVE
+x1 <- dataQ3.2$smokers
+x2 <- dataQ3.2$life_exp
+x3 <- dataQ3.2$poor_fair_health
+
+wts1 <- 1/fitted(lm(abs(residuals(mlr3.2))~(x1+x2+x3)))^2
+model3_WLS <- lm(y~x1+x2+x3, weight = wts1)
+summary(model3_WLS)
+
+wts2 <- 1/fitted(lm(abs(residuals(model3_WLS))~(x1+x2+x3)))^2
+model3_WLS2 <- lm(y~x1+x2+x3, weight = wts2)
+summary(model3_WLS2)
+
+wts3 <- 1/fitted(lm(abs(residuals(model3_WLS2))~(x1+x2+x3)))^2
+model3_WLS3 <- lm(y~x1+x2+x3, weight = wts3)
+summary(model3_WLS3)
+```
+
+```{r}
+df <- data.frame(x1, x2, x3, y)
+df$group <- cut_number(df$y, n=5)
+model <- model3_WLS3
+df$residuals = model$residuals
+bf <- bf.test(residuals~group, df) 
+
+exporesid_mlr3<- residuals(model3_WLS3) 
+shapiro.test(exporesid_mlr3) 
+```
+
+# Best Subsets
+
+Best Subsets was performed to see which model was the best. For research question 1, the full model was best. For research question 2 and research question 3, SLR models were best.
+
+## Q1
+
+```{r}
+bs <- BestSub(cbind(Data1$poverty, Data1$uninsured), Data1$COVID_POSITIVE, num=1)
+bs
+```
+
+## Q2
+
+```{r}
+bs <- BestSub(cbind(Data2$obesity, Data2$inactive), Data2$COVID_POSITIVE, num=1)
+bs
+```
+
+## Q3
+
+```{r}
+bs <- BestSub(cbind(dataQ3.2$smokers, dataQ3.2$life_exp, dataQ3.2$poor_fair_health), dataQ3.2$COVID_POSITIVE, num=1)
+bs
+```
+
+# Added-Variable Plots
+
+Added-Varibale plots were used to validate the results of the best subsets output.
+
+## Q1
+```{r}
+avPlots(model1_WLS)
+```
+
+## Q2
+```{r}
+avPlots(model2_WLS3)
+```
+
+## Q3
+```{r}
+avPlots(model3_WLS3)
+```
+
+# Global F-Test
+
+The global f-test was performed to assessed on the final models to assess the null hypothesis. For research question 1, the null hypothesis was rejected, meaning at least one beta is not equal to zero. Based on the output of best subsets and the added-variable plots, it is likely both betas do not equal zero and the full model does help in predicting y. For research question 2, the null hypothesis failed to be rejected, which means all betas are equal to zero and these betas have no predicting power for y. For research question 3, the null hypothesis was rejected, which means at least one beta does not equal zero. Based on the best subsets output, it is likely only one beta does not equal zero, so an SLR model would be better in describing y.
+
+## Q1
+```{r}
+qf(0.95, 3-1, 92-3)
+summary(model1_WLS)
+plot(model1_WLS)
+```
+
+## Q2
+```{r}
+qf(0.95, 3-1, 92-3)
+summary(model2_WLS3)
+plot(model2_WLS3)
+```
+
+## Q3
+```{r}
+qf(0.95, 4-1, 88-3)
+summary(model3_WLS3)
+plot(model3_WLS3)
+```
+
+# K-Fold
+
+K Fold validation was performed and compared to the output of best subsets, the added-variable plots, and the conclusion from the f-test. The smallest RMSE is desired. The results of k-fold validation aligned for all research questions.
+
+## Q1
+```{r}
+set.seed(123) #set seed for reproducibility  
+
+train.control <- trainControl(method="cv", number=10)  #10 fold cross validation  
+step.model1.1 <- train(COVID_POSITIVE~poverty, data=Data1, method="lm",trControl=train.control) 
+
+step.model1.1$results  
+```
+```{r}
+set.seed(123) #set seed for reproducibility  
+
+train.control <- trainControl(method="cv", number=10)  #10 fold cross validation  
+step.model1.2 <- train(COVID_POSITIVE~uninsured, data=Data1, method="lm",trControl=train.control) 
+
+step.model1.2$results  
+```
+
+```{r}
+set.seed(123) #set seed for reproducibility  
+
+train.control<-trainControl(method="cv", number=10)  #10 fold cross validation  
+step.model1.3<-train(COVID_POSITIVE~poverty+uninsured, data=Data1, method="leapBackward", tuneGrid=data.frame(nvmax=2),trControl=train.control)
+
+step.model1.3$results  
+```
+
+## Q2
+```{r}
+set.seed(123) #set seed for reproducibility  
+
+train.control <- trainControl(method="cv", number=10)  #10 fold cross validation  
+step.model2.1 <- train(COVID_POSITIVE~obesity, data=Data2, method="lm",trControl=train.control) 
+
+step.model2.1$results  
+```
+```{r}
+set.seed(123) #set seed for reproducibility  
+
+train.control <- trainControl(method="cv", number=10)  #10 fold cross validation  
+step.model2.2 <- train(COVID_POSITIVE~inactive, data=Data2, method="lm",trControl=train.control)
+
+step.model2.2$results  
+```
+
+```{r}
+set.seed(123) #set seed for reproducibility  
+
+train.control <- trainControl(method="cv", number=10)  #10 fold cross validation  
+step.model2.3 <- train(COVID_POSITIVE~obesity+inactive, data=Data2, method="leapBackward",tuneGrid=data.frame(nvmax=2),trControl=train.control) 
+
+step.model2.3$results  
+```
+
+## Q3
+```{r}
+set.seed(123) #set seed for reproducibility  
+
+train.control <- trainControl(method="cv", number=10)  #10 fold cross validation  
+step.model3.1 <- train(COVID_POSITIVE~smokers, data= dataQ3.2, method="lm", trControl=train.control) 
+
+step.model3.1$results  
+```
+
+```{r}
+set.seed(123) #set seed for reproducibility  
+
+train.control <- trainControl(method="cv", number=10)  #10 fold cross validation  
+step.model3.2 <- train(COVID_POSITIVE~life_exp, data= dataQ3.2, method="lm", trControl=train.control) 
+
+step.model3.2$results  
+```
+
+```{r}
+set.seed(123) #set seed for reproducibility  
+
+train.control <- trainControl(method="cv", number=10)  #10 fold cross validation  
+step.model3.3 <- train(COVID_POSITIVE~poor_fair_health, data= dataQ3.2, method="lm", trControl=train.control) 
+
+step.model3.3$results  
+```
+
+```{r}
+set.seed(123) #set seed for reproducibility  
+
+train.control <- trainControl(method="cv", number=10)  #10 fold cross validation  
+step.model3.4 <- train(COVID_POSITIVE~smokers+life_exp, data= dataQ3.2, method="leapBackward", tuneGrid=data.frame(nvmax=2), trControl=train.control) 
+
+step.model3.4$results  
+```
+
+```{r}
+set.seed(123) #set seed for reproducibility  
+
+train.control <- trainControl(method="cv", number=10)  #10 fold cross validation  
+step.model3.5 <- train(COVID_POSITIVE~smokers+poor_fair_health, data= dataQ3.2, method="leapBackward", tuneGrid=data.frame(nvmax=2), trControl=train.control) 
+
+step.model3.5$results  
+```
+
+```{r}
+set.seed(123) #set seed for reproducibility  
+
+train.control <- trainControl(method="cv", number=10)  #10 fold cross validation  
+step.model3.6 <- train(COVID_POSITIVE~life_exp+poor_fair_health, data= dataQ3.2, method="leapBackward", tuneGrid=data.frame(nvmax=2), trControl=train.control) 
+
+step.model3.6$results  
+```
+
+```{r}
+set.seed(123) #set seed for reproducibility  
+
+train.control <- trainControl(method="cv", number=10)  #10 fold cross validation  
+step.model3.7 <- train(COVID_POSITIVE~smokers+life_exp+poor_fair_health, data= dataQ3.2, method="leapBackward", tuneGrid=data.frame(nvmax=3), trControl=train.control) 
+
+step.model3.7$results  
+```
